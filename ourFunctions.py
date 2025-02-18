@@ -3,21 +3,22 @@ import pandas as pd
 
 
 
-# datas = np.array([[0.2, 23, 5.7],
-#                 [0.4, 1, 5.4],
-#                 [1.8, 0.5, 5.2],
-#                 [5.6, 50, 5.1],
-#                 [-0.5, 34, 5.3],
-#                 [0.4, 19, 5.4],
-#                 [1.1, 11, 5.5]])  
+datas = np.array([[0.2, 23, 5.7],
+                [0.4, 1, 5.4],
+                [1.8, 0.5, 5.2],
+                [5.6, 50, 5.1],
+                [-0.5, 34, 5.3],
+                [0.4, 19, 5.4],
+                [1.1, 11, 5.5]])  
 
 
-df = pd.read_excel('Raisin_Dataset.xlsx')
+##   USE THIS FOR PROB 3
+# df = pd.read_excel('Raisin_Dataset.xlsx')
 
-# Apply one-hot encoding to all categorical columns
-df_encoded = pd.get_dummies(df,columns=["Class"], dtype=int, drop_first=True)  # drop_first=True removes the first dummy column for each categorical column
-df_encoded.to_csv("raisins.csv", index=False)
-datas = df_encoded.to_numpy()
+# # Apply one-hot encoding to all categorical columns
+# df_encoded = pd.get_dummies(df,columns=["Class"], dtype=int, drop_first=True)  # drop_first=True removes the first dummy column for each categorical column
+# df_encoded.to_csv("raisins.csv", index=False)
+# datas = df_encoded.to_numpy()
 
 
 def find_mean(att1):
