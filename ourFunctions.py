@@ -11,13 +11,13 @@ import pandas as pd
 #                 [0.4, 19, 5.4],
 #                 [1.1, 11, 5.5]])  
 
+
 df = pd.read_excel('Raisin_Dataset.xlsx')
 
-# Select only the numeric columns
-numeric_data = df.select_dtypes(include=[np.number])
-
-# Convert the numeric DataFrame to a NumPy array
-datas = numeric_data.to_numpy()
+# Apply one-hot encoding to all categorical columns
+df_encoded = pd.get_dummies(df,columns=["Class"], dtype=int, drop_first=True)  # drop_first=True removes the first dummy column for each categorical column
+df_encoded.to_csv("raisins.csv", index=False)
+datas = df_encoded.to_numpy()
 
 
 def find_mean(att1):
@@ -39,10 +39,10 @@ def multi_mean(datas):
     return multi_mean
 
 
-print("Multidimensional mean: \n")
-print(multi_mean(datas))
-print()
-print("Numpy multi mean: ", np.mean(datas, axis=0))
+# print("Multidimensional mean: \n")
+# print(multi_mean(datas))
+# print()
+# print("Numpy multi mean: ", np.mean(datas, axis=0))
 
 
 def sampleVar(att1):            
