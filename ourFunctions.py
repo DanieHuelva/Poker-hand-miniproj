@@ -3,13 +3,22 @@ import pandas as pd
 
 
 
-datas = np.array([[0.2, 23, 5.7],
-                [0.4, 1, 5.4],
-                [1.8, 0.5, 5.2],
-                [5.6, 50, 5.1],
-                [-0.5, 34, 5.3],
-                [0.4, 19, 5.4],
-                [1.1, 11, 5.5]])  
+# datas = np.array([[0.2, 23, 5.7],
+#                 [0.4, 1, 5.4],
+#                 [1.8, 0.5, 5.2],
+#                 [5.6, 50, 5.1],
+#                 [-0.5, 34, 5.3],
+#                 [0.4, 19, 5.4],
+#                 [1.1, 11, 5.5]])  
+
+df = pd.read_excel('Raisin_Dataset.xlsx')
+
+# Select only the numeric columns
+numeric_data = df.select_dtypes(include=[np.number])
+
+# Convert the numeric DataFrame to a NumPy array
+datas = numeric_data.to_numpy()
+
 
 def find_mean(att1):
     sumOfatt = sum(att1)
@@ -30,10 +39,10 @@ def multi_mean(datas):
     return multi_mean
 
 
-# print("Multidimensional mean: \n")
-# print(multi_mean(datas))
-# print()
-# print("Numpy multi mean: ", np.mean(datas, axis=0))
+print("Multidimensional mean: \n")
+print(multi_mean(datas))
+print()
+print("Numpy multi mean: ", np.mean(datas, axis=0))
 
 
 def sampleVar(att1):            
