@@ -1,8 +1,15 @@
 import numpy as np
+import pandas as pd
 
 
-data = np.loadtxt('poker-hand-testing.data', delimiter=',')  # Load data as a list of lists
-data_list = data.tolist()  # Convert NumPy array to a Python list
+
+datas = np.array([[0.2, 23, 5.7],
+                [0.4, 1, 5.4],
+                [1.8, 0.5, 5.2],
+                [5.6, 50, 5.1],
+                [-0.5, 34, 5.3],
+                [0.4, 19, 5.4],
+                [1.1, 11, 5.5]])  
 
 def find_mean(att1):
     sumOfatt = sum(att1)
@@ -10,14 +17,23 @@ def find_mean(att1):
     return mean
 
 
-def multi_mean(data_list):
+# print("Mean of col 1; ", find_mean(datas[:, 0]))
+# print("mean from numpy: ", np.mean(datas[:, 0]))
+
+
+def multi_mean(datas):
     multi_mean = []
-    for i in range(11):
-        column_sum = sum(float(row[i]) for row in data_list)  # Convert to list and sum
-        list1 = []
-        list1.append(column_sum/1000000)
-        multi_mean.append(list1)
+    for i in range(datas.shape[1]):  # Iterate through the columns
+        column_sum = np.sum(datas[:, i])  # Sum of each column
+        column_mean = column_sum / datas.shape[0]  # Mean of the column
+        multi_mean.append([column_mean])  # Append the result as a list
     return multi_mean
+
+
+# print("Multidimensional mean: \n")
+# print(multi_mean(datas))
+# print()
+# print("Numpy multi mean: ", np.mean(datas, axis=0))
 
 
 def sampleVar(att1):            
@@ -25,8 +41,9 @@ def sampleVar(att1):
     sum2 = 0
     for i in range(len(att1)):
         sum2 += ((att1[i] - mean)**2)
-    var = sum2 / (len(att1))
+    var = sum2 / (len(att1)-1)
     return var
+
 
 
 def sampleCov(att1, att2):
@@ -39,20 +56,28 @@ def sampleCov(att1, att2):
     return cov
 
 
-def covMatrix(data):
+def covMatrix(datas):
     #can use sampleVar and sampleCov
+    datas = np.array(datas)
     matrix = []
-    for i in range(11):
+    for i in range(datas.shape[1]):
         list1 = []
-        for j in range(11):
+        for j in range(datas.shape[1]):
             if (i == j):
-                cov = sampleVar(data[:, i])
+                cov = sampleVar(datas[:, i])
                 list1.append(cov)
             else:
-                cov = sampleCov(data[:,i], data[:,j])
+                cov = sampleCov(datas[:,i], datas[:,j])
                 list1.append(cov)
         matrix.append(list1)
     return matrix
+
+
+# print()
+# print(covMatrix(datas))
+
+# cov_matrix = np.cov(datas, rowvar=False, ddof=1)
+# print("Covariance Matrix:\n", cov_matrix)
 
 
 def correlationCoEf(att1, att2):
@@ -62,34 +87,111 @@ def correlationCoEf(att1, att2):
     return numer / (o1 * o2)
 
 
-# print("Multidimensional mean: \n")
-# print(multi_mean(data_list))
+# print(correlationCoEf(datas[:, 1], datas[:, 2]))
 # print()
+# corr_matrix = np.corrcoef(datas[:, 1], datas[:, 2])
+# print(corr_matrix[0,1])
 
-# print(sampleVar(data[:,2]))
-# print()
-# column_sample_variance = np.var(data[:, 2], ddof=1)
-# print(f"Sample Variance of column 2:", column_sample_variance)
-# print()
 
-# print(sampleCov(data[:, 1], data[:, 2]))
-# print()
-# cov_matrix = np.cov(data[:, 1], data[:, 2], ddof=1)
-# sample_covariance = cov_matrix[0, 1]
-# print("Sample Covariance between X and Y:", sample_covariance)
+
+def standardDev(col, mean):
+    variance = sum((x - mean) ** 2 for x in col) / len(col)
+    return variance ** 0.5  # Square root of variance
+
+
+def zNorm(datas):
+    columns = list(zip(*datas))
+    means = [find_mean(col) for col in columns]
+    stds = [standardDev(col, mu) for col, mu in zip(columns, means)]
+    normalized_data = [
+        [(x - mu) / sigma if sigma != 0 else 0 for x, mu, sigma in zip(row, means, stds)]
+        for row in datas
+    ]
     
-# print()
-# print(covMatrix(data))
+    return normalized_data
 
-# cov_matrix = np.cov(data, rowvar=False, ddof=1)
-# print("Covariance Matrix:\n", cov_matrix)
 
-print(correlationCoEf(data[:, 1], data[:, 2]))
-print()
-corr_matrix = np.corrcoef(data[:, 1], data[:, 2])
+# print("Z acore: ", zNorm(datas))
+# mean = np.mean(datas, axis=0)
+# std_dev = np.std(datas, axis=0, ddof=0)  # Population standard deviation
+# # Calculate Z-scores for each column
+# z_scores = (datas - mean) / std_dev
+# print("numpy's z-score: ", z_scores)
+    
+    
+def rangeNorm(datas):
+        # Transpose the data to work column-wise
+    columns = list(zip(*datas))
 
-# Extract the correlation coefficient between X and Y
-correlation_coefficient = corr_matrix[0, 1]
-print("Correlation Coefficient between X and Y:", correlation_coefficient)
+    # Compute min and max for each column
+    min_vals = [min(col) for col in columns]
+    max_vals = [max(col) for col in columns]
+
+    # Normalize each column
+    normalized_data = [
+        [(x - min_val) / (max_val - min_val) if max_val != min_val else 0
+        for x, min_val, max_val in zip(row, min_vals, max_vals)]
+        for row in datas
+    ]
+    
+    return normalized_data
+
+
+# # Apply Min-Max Normalization
+# normalized_datas = rangeNorm(datas)
+# print("our range norm: ", normalized_datas)
+# min_vals = np.min(datas, axis=0)
+# max_vals = np.max(datas, axis=0)
+
+# # Perform range normalization for each column
+# normalized_data = (datas - min_vals) / (max_vals - min_vals)
+
+# print("Normalized data (range normalization):")
+# print(normalized_data)
+
+
+
+def label_encode_2d(datas):
+    # Create a dictionary to store label encodings
+    label_encoders = {}
+    
+    # Iterate through each column
+    for col_index in range(len(datas[0])):  # For each column
+        # Find unique values in the column
+        unique_values = set(row[col_index] for row in datas)
+        
+        # Create a mapping from categorical value to an integer label
+        value_to_label = {value: index for index, value in enumerate(unique_values)}
+        
+        # Store the mapping in the label_encoders dictionary
+        label_encoders[col_index] = value_to_label
+        
+        # Encode the column values
+        for row in datas:
+            row[col_index] = value_to_label[row[col_index]]
+    
+    return datas, label_encoders
+
+
+# # Example usage:
+# datas = [
+#     ['red', 'small', 'round'],
+#     ['blue', 'large', 'square'],
+#     ['red', 'large', 'round'],
+#     ['green', 'small', 'round'],
+#     ['blue', 'small', 'square']
+# ]
+
+# encoded_data, label_encoders = label_encode_2d(datas)
+
+# # Print the encoded data and the label encoders (mappings)
+# print("Encoded Data:")
+# for row in encoded_data:
+#     print(row)
+
+# print("\nLabel Encoders (Mappings):")
+# for col_index, encoder in label_encoders.items():
+#     print(f"Column {col_index}: {encoder}")
+
 
 
