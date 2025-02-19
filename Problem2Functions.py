@@ -174,18 +174,29 @@ print("our range norm: ", normalized_datas)
 
 def label_encode_2d(inputs):
     label_mappings = {}
-    encoded = inputs.copy()
+    encoded = [row[:] for row in inputs]  # Copy the input list to avoid modifying it in place
+
     # Iterate over each column
-    for col in range(inputs.shape[1]):
-        unique_values, encoded_values = np.unique(inputs[:, col], return_inverse=True)
-        encoded[:, col] = encoded_values
-        label_mappings[col] = dict(enumerate(unique_values))  # Store mapping
+    for col in range(len(inputs[0])):
+        # Extract the unique values from the column (set to ensure uniqueness)
+        unique_values = list(set(row[col] for row in inputs))
+        unique_values.sort()  # Sort the values to ensure consistent encoding
 
-    return encoded.astype(int)
+        # Create a mapping of unique values to encoded labels
+        value_to_label = {value: index for index, value in enumerate(unique_values)}
+
+        # Replace the values in the column with their encoded labels
+        for row in encoded:
+            row[col] = value_to_label[row[col]]
+
+        # Store the mapping for reference
+        label_mappings[col] = value_to_label
+
+    return np.array(encoded)
 
 
-categ = datas[:, -1]   ##the last attribute of our data is categorical
-print(label_encode_2d(np.array([categ])))
+# categ = datas[:, -1]   ##the last attribute of our data is categorical
+# print(label_encode_2d(np.array([categ])))
 
 
 # # Example usage:
