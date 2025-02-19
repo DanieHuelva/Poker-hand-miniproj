@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Load the dataset
-file_path = r'C:\Users\kathr\OneDrive\Documents\MSU25\Spring\DataMining\Project1\Raisin_Dataset\Raisin_Dataset.xlsx'
+file_path = 'Raisin_Dataset.xlsx'
 df = pd.read_excel(file_path)
 
 # Select the relevant columns for scatter plots
