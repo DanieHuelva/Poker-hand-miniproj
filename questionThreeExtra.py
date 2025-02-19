@@ -13,6 +13,72 @@ df_encoded.iloc[:,:8] = df_encoded.iloc[:,:8].astype(int)
 df_encoded = df_encoded.to_numpy()
 
 
+def find_mean(att1):
+    datas = df_encoded
+    list1 = datas[:, att1]
+    sumOfatt = sum(list1)
+    mean = sumOfatt/(len(list1))
+    return mean
+
+
+def multi_mean(datas):
+    multi_mean = []
+    for i in range(datas.shape[1]):  # Iterate through the columns
+        column_mean = find_mean(i)
+        multi_mean.append([column_mean])  # Append the result as a list
+    return np.array(multi_mean)
+
+
+def sampleVar(att1):
+    datas = df_encoded
+    list1 = datas[:, att1]            
+    mean = find_mean(att1)
+    sum2 = 0
+    for i in range(len(list1)):
+        sum2 += ((list1[i] - mean)**2)       #adding everything for (xi-u)^2
+    var = sum2 / (len(list1)-1)          
+    return var
+
+
+
+def sampleCov(att1, att2):
+    datas = df_encoded
+    list1 = datas[:, att1]
+    list2 = datas[:, att2]  
+    mean1 = find_mean(att1)
+    mean2 = find_mean(att2)
+    sum2 = 0
+    for i in range(len(list1)):
+        sum2 += ((list1[i] - mean1)*(list2[i]-mean2))
+    cov = sum2 / (len(list1) -1)
+    return cov
+
+
+
+def covMatrix(datas):
+    #can use sampleVar and sampleCov
+    datas = np.array(datas)
+    matrix = []
+    for i in range(datas.shape[1]):
+        list1 = []
+        for j in range(datas.shape[1]):
+            if (i == j):                        #for diagonals use samplevar
+                cov = sampleVar(i)
+                list1.append(cov)
+            else:                               #everything else is covariance
+                cov = sampleCov(i, j)
+                list1.append(cov)
+        matrix.append(list1)
+    return matrix
+
+
+def correlationCoEf(att1, att2):
+    numer = sampleCov(att1, att2)
+    o1 = sampleVar(att1) ** 0.5
+    o2 = sampleVar(att2) ** 0.5
+    return numer / (o1 * o2)
+
+
 mm = multi_mean(df_encoded)
 mm
 
