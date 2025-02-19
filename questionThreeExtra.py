@@ -2,6 +2,12 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+df = pd.read_excel('Raisin_Dataset.xlsx')
+dfn = df.to_numpy()
+
+numeric_data = df.select_dtypes(include=[np.number])
+datas = numeric_data.to_numpy()
+
 df_encoded = pd.get_dummies(df, columns=["Class"], drop_first = True)
 df_encoded.iloc[:,:8] = df_encoded.iloc[:,:8].astype(int)
 df_encoded = df_encoded.to_numpy()
