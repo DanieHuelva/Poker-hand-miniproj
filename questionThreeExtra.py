@@ -102,7 +102,7 @@ df_zscore_normalized = z_score_normalize(df_encoded)
 
 # Compute covariance and correlation matrices 
 cov_matrix = pd.DataFrame(covMatrix(df_range_normalized), index=df_range_normalized.columns, columns=df_range_normalized.columns)
-corr_matrix = df_zscore_normalized.corr(method=correlationCoEf)
+corr_matrix = df_zscore_normalized.corr(method='pearson')
 
 largest_cov = cov_matrix.unstack().drop_duplicates().sort_values(ascending=False)
 largest_cov_pair = largest_cov.iloc[1]  # Skipping first (self-covariance)
