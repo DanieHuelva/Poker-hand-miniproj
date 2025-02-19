@@ -89,6 +89,17 @@ def covMatrix(datas):
 # cov_matrix = np.cov(datas, rowvar=False, ddof=1)
 # print("Covariance Matrix:\n", cov_matrix)
 
+cov_matrix = covMatrix(datas)
+
+negative_cov_count = 0
+
+for i in range(cov_matrix.shape[0]):
+    for j in range(cov_matrix.shape[1]):
+        if i != j and cov_matrix[i, j] < 0:
+            negative_cov_count += 1
+
+print(f"Number of pairs with negative covariance: {negative_cov_count}")
+
 
 def correlationCoEf(att1, att2):
     numer = sampleCov(att1, att2)
@@ -101,6 +112,18 @@ def correlationCoEf(att1, att2):
 # print()
 # corr_matrix = np.corrcoef(datas[:, 1], datas[:, 2])
 # print(corr_matrix[0,1])
+
+countGreaterFive = 0
+numFeatures = datas.shape[1]
+
+for i in range(numFeatures):
+    for j in range(i + 1, numFeatures):  
+        correlation = correlationCoEf(datas[:, i], datas[:, j])
+        
+        if correlation >= 0.5:
+            countGreaterFive += 1
+
+print(f"Number of pairs with correlation >= 0.5: {countGreaterFive}")
 
 
 
