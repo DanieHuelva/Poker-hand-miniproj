@@ -1,5 +1,8 @@
 import random
 import networkx as nx
+from itertools import combinations
+import numpy as np
+
 
 def load_edges_from_file(file_path):
     lis = []
@@ -20,12 +23,6 @@ def makeIntoGraph(edges):
 
 
 #THIS IS A TINY GRAPH TO TEST FUNCTIONS AND CHECK ACCURACY
-# listEd = [ (1,2), 
-#         (0, 4),
-#         (3,1),
-#         (2,3), (2,4), (2,5)
-# ]
-
 listEd = [ (4,0),
         (0,1),
         (1,2),
@@ -40,7 +37,9 @@ listEd = [ (4,0),
         (2,7)]
 
 
-##PROBLEM 1
+
+
+##PROBLEM 1  (verified)
 def getNodes(G):
     nodes = set()
     for edge in G:
@@ -50,19 +49,19 @@ def getNodes(G):
     return len(nodes)
 
 
-##PROBLEM 2
+##PROBLEM 2 (veridied)
 def getDeg(G, i):
     deg = {}
     for edge in G:
         for node in edge:
             if node not in deg:
-                deg[node] = 1
+                deg[node] = 1           #use node as key and value as how many degree a node has
             else:
                 deg[node] +=1
     return deg[i]
 
 
-##PROBLEM 3
+##PROBLEM 3 (verified)
 def getAdj(listed):
     nodesNum = getNodes(listed)
     adjMatrix = []
@@ -79,7 +78,7 @@ def getAdj(listed):
     return adjMatrix
 
 
-##PROBLEM 4
+##PROBLEM 4 (verified)
 def degDesti(G):
     deg = {}
     for edge in G:                      #made a dictionary of nodes and its degress
@@ -98,57 +97,57 @@ def degDesti(G):
     return list(nodeDeg.values())
 
 
-##PROBLEM 5
+##PROBLEM 5 (verified)
 def probabVertex(degreeList, degree):
     totalsum = 0
     total = sum(degreeList)
-    for i in range(degree-1, len(degreeList)):
+    for i in range(degree, len(degreeList)):
         totalsum+= degreeList[i]
     return (totalsum/total)
 
 
-##PROBLEM 6
+##PROBLEM 6  (verified)
 def eccen(lis, vertex):
     G = makeIntoGraph(lis)
     nodeNum = getNodes(lis)
     listPath = []
     for i in range(nodeNum):
-        length = nx.shortest_path_length(G, vertex, i)
+        length = nx.shortest_path_length(G, vertex, i)          #finding if which lentgth is the longest and uses that as the longest path of a vertec
         listPath.append(length)
     return max(listPath)
 
 
-##PROBLEM 7
+##PROBLEM 7  (verified)
 def diameter(lis):
     nodeNUm = getNodes(lis)
     findingDiam = []
     for i in range(nodeNUm):
         diam = eccen(lis, i)
         findingDiam.append(diam)
-    return max(findingDiam)
+    return max(findingDiam)         #maximum of all the eccentricity of all nodes
 
 
-##PROBLEM 8
+##PROBLEM 8    (verified)
 def radius(lis):
     nodeNUm = getNodes(lis)
     findingDiam = []
     for i in range(nodeNUm):
         diam = eccen(lis, i)
         findingDiam.append(diam)
-    return min(findingDiam)
+    return min(findingDiam)         #minimum of all the eccentricity of all nodes
 
 
-##PROBLEM 9
+##PROBLEM 9   (verified)
 def clusCoeff(lis, vertex):
-    G = makeIntoGraph(lis)  # Assuming makeIntoGraph is defined elsewhere
-    neighbors = list(G.neighbors(vertex))  # Convert to list for easier indexing
+    G = makeIntoGraph(lis)  
+    neighbors = list(G.neighbors(vertex)) 
     m = 0
     num = len(neighbors)
     if num < 2:
-        return 0  # A vertex with fewer than 2 neighbors has no valid clustering coefficient
+        return 0 
     # Iterate through pairs of neighbors
     for i in range(num-1):
-        for j in range(i+1, num):  # Start from i+1 to avoid duplicate pairs
+        for j in range(i+1, num):  
             if G.has_edge(neighbors[i], neighbors[j]):
                 m += 1
     
@@ -156,14 +155,121 @@ def clusCoeff(lis, vertex):
     return coeff
 
 
-G = load_edges_from_file("/Users/daniehuelva/Desktop/comp/Data Mining/Poker-hand-miniproj-1/MiniProj2/FBdata.txt")
 
+##PROBELM 10
+def between(edges, vertex):
+    G = nx.Graph()
+    G.add_edges_from(edges)
+    centrality = 0
+    for s, t in combinations(G.nodes, 2):  # Avoids duplicate pairs automatically
+        if vertex in (s, t):  
+            continue
+        all_shortest_paths = list(nx.all_shortest_paths(G, source=s, target=t))
+        total_paths = len(all_shortest_paths)  # Total shortest paths from s to t
+        paths_through_vertex = sum(1 for path in all_shortest_paths if vertex in path)
+        if total_paths > 0:  # Avoid division by zero
+            centrality += paths_through_vertex / total_paths  # Normalize contribution
+    # Normalize by the number of possible pairs (excluding vertex itself)
+    total_pairs = (len(G.nodes) - 1) * (len(G.nodes) - 2) / 2
+    return centrality / total_pairs if total_pairs > 0 else 0
+
+
+##PROBLEM 11 (verified)
+def cloness(listed, vertex):
+    G = nx.Graph()
+    G.add_edges_from(listed)
+    total = 0 
+    numNodes = getNodes(listed)
+    for i in range(numNodes):
+        if i != vertex:
+            length = nx.shortest_path_length(G,vertex,i)
+            total+=length
+    return ((numNodes-1)/total)
+
+
+def power_iteration_eigenvector_centrality(adj_matrix, max_iter=100, tol=1e-6):
+    n = adj_matrix.shape[0]  # Number of nodes
+    x = np.ones(n) / np.sqrt(n)  # Initial guess (normalized)
+    for _ in range(max_iter):
+        x_new = np.dot(adj_matrix, x)  # Multiply adjacency matrix with vector
+        norm = np.linalg.norm(x_new, 2)  # Compute L2 norm (Euclidean norm)
+        if norm == 0:
+            return x_new  # Avoid division by zero
+        x_new /= norm  # Normalize with L2 norm
+        # Check for convergence
+        if np.linalg.norm(x_new - x, 2) < tol:
+            break
+        x = x_new  # Update vector
+    return x
+
+
+G = load_edges_from_file("/Users/daniehuelva/Desktop/comp/Data Mining/Poker-hand-miniproj-1/MiniProj2/FBdata.txt")
+newG = makeIntoGraph(listEd)
+
+
+##PROBLEM 1
 # print(getNodes(G.edges()))
-# print(getDeg(G.edges(), 2))
-# print(getAdj(listEd))
+
+
+##PROBLEM 2
+# print(getDeg(listEd, 5))
+# print(nx.degree(newG)[5])
+
+
+##PROBLEM 3
+# adj = getAdj(listEd)
+# for row in adj:
+#     print(row)
+# print()
+# print(nx.adjacency_matrix(newG, nodelist=sorted(newG.nodes())).toarray())
+
+
+##PROBLEM 4
 # lis = degDesti(listEd)
 # print(lis)
-# print("Probabiltiy of getting", 3, "or higher: ", probabVertex(lis, 3)*100, "%")
+# degree_distribution = nx.degree_histogram(newG)
+# print(degree_distribution) 
+
+
+##PROBLEM 5
+# lis = degDesti(listEd)
+# print(lis)
+# print("Probabiltiy of getting", 4, "or higher: ", probabVertex(lis, 4))
+
+
+##PROBLEM 6
+# print(eccen(listEd, 10))
+# print(nx.eccentricity(newG, v=[10]))
+
+
+##PROBLEM 7
 # print(diameter(listEd))
+# print(nx.diameter(newG))
+
+
+##PROBLEM 8
 # print(radius(listEd))
-print(clusCoeff(listEd, 1))
+# print(nx.radius(newG))
+
+
+##PROBLEM 9
+# print(clusCoeff(listEd, 7))
+# print(nx.clustering(newG, 7))
+
+
+##PROBLEM 10
+# print(between(listEd, 7))
+# betweenness_scores = nx.betweenness_centrality(newG) 
+# print(betweenness_scores[7])
+
+
+##PROBLEM 11
+# print(cloness(listEd, 4))
+# print(nx.closeness_centrality(newG)[4])
+
+
+##PROBLEM 12
+adj = nx.adjacency_matrix(newG, nodelist=sorted(newG.nodes())).toarray()
+centrality = power_iteration_eigenvector_centrality(adj)
+print("Eigenvector Centrality:", centrality)
+print(nx.eigenvector_centrality(newG).values())
