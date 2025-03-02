@@ -9,7 +9,6 @@ def load_edges_from_file(file_path):
             node1, node2 = line.strip().split()
             # Add the edge between node1 and node2
             lis.append((int(node1), int(node2)))
-
     return lis
 
 
@@ -21,12 +20,27 @@ def makeIntoGraph(edges):
 
 
 #THIS IS A TINY GRAPH TO TEST FUNCTIONS AND CHECK ACCURACY
-listEd = [ (1,2), 
-        (0, 4),
-        (3,1),
-        (2,3), (2,4), (2,5)
-]
+# listEd = [ (1,2), 
+#         (0, 4),
+#         (3,1),
+#         (2,3), (2,4), (2,5)
+# ]
 
+listEd = [ (4,0),
+        (0,1),
+        (1,2),
+        (2,3),
+        (6,5),
+        (5,1),
+        (1,7),
+        (7,8),
+        (2,9),
+        (9,10),
+        (0,7),
+        (2,7)]
+
+
+##PROBLEM 1
 def getNodes(G):
     nodes = set()
     for edge in G:
@@ -36,7 +50,7 @@ def getNodes(G):
     return len(nodes)
 
 
-
+##PROBLEM 2
 def getDeg(G, i):
     deg = {}
     for edge in G:
@@ -48,6 +62,7 @@ def getDeg(G, i):
     return deg[i]
 
 
+##PROBLEM 3
 def getAdj(listed):
     nodesNum = getNodes(listed)
     adjMatrix = []
@@ -64,7 +79,7 @@ def getAdj(listed):
     return adjMatrix
 
 
-
+##PROBLEM 4
 def degDesti(G):
     deg = {}
     for edge in G:                      #made a dictionary of nodes and its degress
@@ -83,7 +98,7 @@ def degDesti(G):
     return list(nodeDeg.values())
 
 
-
+##PROBLEM 5
 def probabVertex(degreeList, degree):
     totalsum = 0
     total = sum(degreeList)
@@ -92,6 +107,7 @@ def probabVertex(degreeList, degree):
     return (totalsum/total)
 
 
+##PROBLEM 6
 def eccen(lis, vertex):
     G = makeIntoGraph(lis)
     nodeNum = getNodes(lis)
@@ -102,6 +118,43 @@ def eccen(lis, vertex):
     return max(listPath)
 
 
+##PROBLEM 7
+def diameter(lis):
+    nodeNUm = getNodes(lis)
+    findingDiam = []
+    for i in range(nodeNUm):
+        diam = eccen(lis, i)
+        findingDiam.append(diam)
+    return max(findingDiam)
+
+
+##PROBLEM 8
+def radius(lis):
+    nodeNUm = getNodes(lis)
+    findingDiam = []
+    for i in range(nodeNUm):
+        diam = eccen(lis, i)
+        findingDiam.append(diam)
+    return min(findingDiam)
+
+
+def clusCoeff(lis, vertex):
+    G = makeIntoGraph(lis)  # Assuming makeIntoGraph is defined elsewhere
+    neighbors = list(G.neighbors(vertex))  # Convert to list for easier indexing
+    m = 0
+    num = len(neighbors)
+    if num < 2:
+        return 0  # A vertex with fewer than 2 neighbors has no valid clustering coefficient
+    # Iterate through pairs of neighbors
+    for i in range(num-1):
+        for j in range(i+1, num):  # Start from i+1 to avoid duplicate pairs
+            if G.has_edge(neighbors[i], neighbors[j]):
+                m += 1
+    
+    coeff = (2 * m) / (num * (num - 1))  # Clustering coefficient formula
+    return coeff
+
+
 G = load_edges_from_file("/Users/daniehuelva/Desktop/comp/Data Mining/Poker-hand-miniproj-1/MiniProj2/FBdata.txt")
 
 # print(getNodes(G.edges()))
@@ -110,5 +163,6 @@ G = load_edges_from_file("/Users/daniehuelva/Desktop/comp/Data Mining/Poker-hand
 # lis = degDesti(listEd)
 # print(lis)
 # print("Probabiltiy of getting", 3, "or higher: ", probabVertex(lis, 3)*100, "%")
-
-print(eccen(G, 0))
+# print(diameter(listEd))
+# print(radius(listEd))
+print(clusCoeff(listEd, 1))
