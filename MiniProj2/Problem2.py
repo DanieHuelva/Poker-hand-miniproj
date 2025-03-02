@@ -138,6 +138,7 @@ def radius(lis):
     return min(findingDiam)
 
 
+##PROBLEM 9
 def clusCoeff(lis, vertex):
     G = makeIntoGraph(lis)  # Assuming makeIntoGraph is defined elsewhere
     neighbors = list(G.neighbors(vertex))  # Convert to list for easier indexing
