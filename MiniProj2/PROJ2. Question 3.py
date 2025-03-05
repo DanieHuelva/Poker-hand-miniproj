@@ -13,7 +13,6 @@ G = nx.read_edgelist(file_path, delimiter=' ', nodetype=int)
 
 largest_cc = max(nx.connected_components(G), key=len)
 G_lcc = G.subgraph(largest_cc).copy()
-"""
 sample_size = 100  
 sampled_nodes = list(G_lcc.nodes())[:sample_size]
 G_sample = G_lcc.subgraph(sampled_nodes)
@@ -93,4 +92,4 @@ plt.show()
 power_law = slope < 0 
 
 power_law
-"""
+
