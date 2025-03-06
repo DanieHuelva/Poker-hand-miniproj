@@ -38,6 +38,16 @@ listEd = [ (4,0),
 
 
 
+file_path = "/Users/daniehuelva/Desktop/comp/Data Mining/Poker-hand-miniproj-1/MiniProj2/FBdata.txt"
+G = nx.read_edgelist(file_path, delimiter=' ', nodetype=int)
+
+largest_cc = max(nx.connected_components(G), key=len)
+G_lcc = G.subgraph(largest_cc).copy()
+sample_size = 100  
+sampled_nodes = list(G_lcc.nodes())[:sample_size]
+G_sample = G_lcc.subgraph(sampled_nodes)
+
+
 
 ##PROBLEM 1  (verified)
 def getNodes(G):
@@ -49,12 +59,8 @@ def getNodes(G):
     return len(nodes)
 
 
-# G = load_edges_from_file("/Users/daniehuelva/Desktop/comp/Data Mining/Poker-hand-miniproj-1/MiniProj2/FBdata.txt")
-newG = makeIntoGraph(listEd)
-
-
 ##PROBLEM 1
-# print("Number of nodes: ", getNodes(listEd))
+# print("Number of nodes: ", getNodes(G_sample.edges()))
 
 
 
@@ -75,8 +81,8 @@ def getDeg(G, i):
 
 
 ##PROBLEM 2
-# print("Getting the degree of 5: ", getDeg(listEd, 5))
-# print(nx.degree(newG)[5])
+# print("Getting the degree of 5: ", getDeg(G_sample.edges(), 5))
+# print(nx.degree(G_sample)[5])
 
 
 
@@ -104,11 +110,11 @@ def getAdj(listed):
 
 
 ##PROBLEM 3
-# adj = getAdj(listEd)
+# adj = getAdj(G_sample.edges())
 # for row in adj:
 #     print(row)
 # print()
-# print(nx.adjacency_matrix(newG, nodelist=sorted(newG.nodes())).toarray())
+# print(nx.adjacency_matrix(G_sample, nodelist=sorted(G_sample.nodes())).toarray())
 
 
 
@@ -135,9 +141,9 @@ def degDesti(G):
 
 
 ##PROBLEM 4
-# lis = degDesti(listEd)
+# lis = degDesti(G_sample.edges())
 # print(lis)
-# degree_distribution = nx.degree_histogram(newG)
+# degree_distribution = nx.degree_histogram(G_sample)
 # print(degree_distribution) 
 
 
@@ -157,8 +163,7 @@ def probabVertex(degreeList, degree):
 
 
 ##PROBLEM 5
-# lis = degDesti(listEd)
-# print(lis)
+# lis = degDesti(G_sample.edges())
 # print("Probabiltiy of getting", 4, "or higher: ", probabVertex(lis, 4))
 
 
@@ -180,8 +185,8 @@ def eccen(lis, vertex):
 
 
 ##PROBLEM 6
-# print("eccentricity of vertex 10:" ,eccen(listEd, 10))
-# print(nx.eccentricity(newG, v=[10]))
+# print("eccentricity of vertex 10:" ,eccen(G_sample.edges(), 0))
+# print(nx.eccentricity(G_sample, v=[0]))
 
 
 
@@ -199,8 +204,7 @@ def diameter(lis):
 
 
 ##PROBLEM 7
-# print("Diameter of graph:", diameter(listEd))
-# print(nx.diameter(newG))
+# print("Diameter of graph:", diameter(G_sample.edges()))
 
 
 
@@ -220,8 +224,8 @@ def radius(lis):
 
 
 ##PROBLEM 8
-# print("Radius of a graph", radius(listEd))
-# print(nx.radius(newG))
+# print("Radius of a graph", radius(G_sample.edges()))
+# print(nx.radius(G_sample))
 
 
 
@@ -245,8 +249,8 @@ def clusCoeff(lis, vertex):
 
 
 ##PROBLEM 9
-# print("Clustering coeff of graph: ",clusCoeff(listEd, 7))
-# print(nx.clustering(newG, 7))
+# print("Clustering coeff of graph: ",clusCoeff(G_sample.edges(), 7))
+# print(nx.clustering(G_sample, 7))
 
 
 
@@ -270,8 +274,8 @@ def between(edges, vertex):
 
 
 ##PROBLEM 10
-# print(between(listEd, 7))
-# betweenness_scores = nx.betweenness_centrality(newG) 
+# print(between(G_sample.edges(), 7))
+# betweenness_scores = nx.betweenness_centrality(G_sample) 
 # print(betweenness_scores[7])
 
 
@@ -292,8 +296,8 @@ def cloness(listed, vertex):
 
 
 ##PROBLEM 11
-# print(cloness(listEd, 4))
-# print(nx.closeness_centrality(newG)[4])
+# print(cloness(G_sample.edges(), 4))
+# print(nx.closeness_centrality(G_sample)[4])
 
 
 
@@ -315,7 +319,7 @@ def power_iteration_eigenvector_centrality(adj_matrix, max_iter):
 
 
 ##PROBLEM 12
-adj = getAdj(listEd)
+adj = getAdj(G_sample.edges())
 centrality = power_iteration_eigenvector_centrality(adj, 100)
 print("Eigenvector Centrality:", centrality)
-# print(nx.eigenvector_centrality(newG).values())
+# print(nx.eigenvector_centrality(G_sample).values())
