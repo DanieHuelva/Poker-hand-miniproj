@@ -56,7 +56,7 @@ def clustering_precision(true_labels, pred_labels):
     return np.sum(np.amax(contingency, axis=1)) / np.sum(contingency)
 
 # Load dataset
-df = pd.read_csv("Customers.csv")
+df = pd.read_csv("MiniProj3/customers.csv")
 true_labels = df["Channel"]
 df_numeric = df.drop(columns=["Channel", "Region"], errors='ignore')
 

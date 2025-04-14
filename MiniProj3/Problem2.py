@@ -88,12 +88,15 @@ data = pd.read_csv('MiniProj3/customers.csv')
 scalar = StandardScaler()
 STD = scalar.fit_transform(data.to_numpy())
 
+
 #Problem 2.1 Test case
-print(getKmeans(STD, 8, 0.5))
+# print(getKmeans(STD, 8, 0.5))
 
 #Problem 2.2 Test case
-print(getDbscan(STD, 5, 0.5))
-print(getDbscan(STD, 3, 0.8))
+# print(getDbscan(STD, 5, 0.5))
+# print(getDbscan(STD, 3, 0.8))
+
+
 
 #Problem 3.1
 # pca = PCA(n_components=2)
